@@ -1,0 +1,33 @@
+ervices:
+  # A Docker service
+  - type: web
+    name: aspnet-app-example
+    env: docker
+    repo: https://github.com/weekitmo/aspnetapp-docker.git
+    region: singapore
+    plan: free
+    branch: main
+    rootDir: .
+    numInstances: 1
+    healthCheckPath: /healthz
+    envVars:
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: lightning
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: lightning
+          property: port
+
+  # A Redis instance
+  - type: redis
+    name: lightning
+    # required
+    ipAllowList: 
+      - source: 0.0.0.0/0
+        description: everywhere
+    plan: free
+    maxmemoryPolicy: noeviction
