@@ -1,4 +1,4 @@
-ervices:
+services:
   # A Docker service
   - type: web
     name: aspnet-app-example
