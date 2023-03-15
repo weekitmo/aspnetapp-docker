@@ -25,9 +25,11 @@ services:
   # A Redis instance
   - type: redis
     name: lightning
+    # https://community.render.com/t/server-cant-connect-to-redis/6536
+    region: singapore
     # required
     ipAllowList: 
       - source: 0.0.0.0/0
         description: everywhere
     plan: free
-    maxmemoryPolicy: noeviction
+    maxmemoryPolicy: allkeys-lru
