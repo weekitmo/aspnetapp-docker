@@ -2,12 +2,14 @@ using Aspnetapp.Models;
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHealthChecks();
 var settings = builder.Configuration.GetSection("Settings").Get<Settings>();
 Console.WriteLine($"Load Settings: ${settings}");
 var app = builder.Build();
 int count = 0;
 
 app.MapGet("/", () => "Hello World");
+app.MapHealthChecks("/healthz");
 app.MapGet("/next", async (context) =>
 {
   var req = context.Request;
