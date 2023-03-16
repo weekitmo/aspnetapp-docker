@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHealthChecks();
+
 var SpecifyCors = "_mycors";
 builder.Services.AddCors(options =>
 {
@@ -20,8 +21,10 @@ builder.Services.AddCors(options =>
 });
 string providerSerializerName = "mymsgpack";
 // builder.Services.AddSingleton<ILog, MyLogger>();
-builder.Services.AddMyLogger(options => {
-  options.UseInfoLogger(config => {
+builder.Services.AddMyLogger(options =>
+{
+  options.UseInfoLogger(config =>
+  {
     config.ForegroundColor = ConsoleColor.Green;
   }, "customLogger");
 });
@@ -49,6 +52,7 @@ var dayTask = new SchedulerTask();
 await dayTask.DayTask();
 var app = builder.Build();
 app.UseCors(SpecifyCors);
+
 app.Use(async (context, next) =>
 {
   try
@@ -164,7 +168,7 @@ app.MapPost("/post", async (HttpContext context) =>
 app.MapDelete("/delete", async (HttpContext context) =>
 {
   await Task.Delay(10, cancellation.Token);
-  return Results.Forbid();
+  return Results.StatusCode(StatusCodes.Status403Forbidden);
 });
 Console.WriteLine($"Server running.");
 app.Run();
