@@ -1,5 +1,6 @@
 using System.Text;
 using Aspnetapp.Models;
+using Aspnetapp.Tasks;
 using EasyCaching.Core;
 using EasyCaching.Core.Configurations;
 using Microsoft.Extensions.FileProviders;
@@ -23,7 +24,7 @@ builder.Services.AddEasyCaching(options =>
   options.UseRedis(config =>
     {
       var host = Environment.GetEnvironmentVariable("REDIS_HOST") ?? "localhost";
-      var port = 6379;
+      int port = 0;
       var result = int.TryParse(Environment.GetEnvironmentVariable("REDIS_PORT"), out port);
       if (!result)
       {
@@ -38,7 +39,8 @@ builder.Services.AddEasyCaching(options =>
 });
 var settings = builder.Configuration.GetSection("Settings").Get<Settings>();
 Console.WriteLine($"Load Settings: ${settings}");
-
+var dayTask = new SchedulerTask();
+await dayTask.DayTask();
 var app = builder.Build();
 app.UseCors(SpecifyCors);
 app.Use(async (context, next) =>
@@ -47,14 +49,13 @@ app.Use(async (context, next) =>
   {
     var req = context.Request;
     req.EnableBuffering();
-    if (context.Request.Method.ToUpperInvariant() != "GET" && req.ContentLength > 0)
+    if (req.Method.ToUpperInvariant() != "GET" && req.ContentLength > 0)
     {
-      Console.WriteLine($"Parser body in {context.Request.Method}");
+      Console.WriteLine($"Parser body in {req.Method}");
       var buffer = new byte[Convert.ToInt32(req.ContentLength)];
       await req.Body.ReadAsync(buffer, 0, buffer.Length);
       //get body string here...
       var requestContent = Encoding.UTF8.GetString(buffer);
-      // 中间件传递数据
       context.Items["bodyParser"] = requestContent;
 
       req.Body.Position = 0;  //rewinding the stream to 0
