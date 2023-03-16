@@ -1,6 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
-
-
 public interface IMyLoggerExternsion
 {
 

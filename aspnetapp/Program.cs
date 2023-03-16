@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHealthChecks();
-
+builder.Services.AddMvc();
 var SpecifyCors = "_mycors";
 builder.Services.AddCors(options =>
 {
@@ -168,7 +168,9 @@ app.MapPost("/post", async (HttpContext context) =>
 app.MapDelete("/delete", async (HttpContext context) =>
 {
   await Task.Delay(10, cancellation.Token);
-  return Results.StatusCode(StatusCodes.Status403Forbidden);
+  context.Response.Headers.Add("Content-Type", "text/plain");
+  // return Results.StatusCode(StatusCodes.Status403Forbidden);
+  return Results.Json<string>($"Forbidden", statusCode: StatusCodes.Status403Forbidden, contentType: "text/plain");
 });
 Console.WriteLine($"Server running.");
 app.Run();

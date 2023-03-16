@@ -24,7 +24,7 @@ namespace Aspnetapp.Tasks
       .WithIdentity("DayTaskTrigger", "trigger-group")
       .ForJob("DayTask", "job-group")
       // second minute hour (day of month) month (day of week) year?
-      .WithCronSchedule("0 0 12 * * ?")
+      .WithCronSchedule("0 0 14 * * ?")
       .Build();
 
       StdSchedulerFactory factory = new StdSchedulerFactory();
