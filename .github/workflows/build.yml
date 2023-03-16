@@ -29,4 +29,4 @@ jobs:
 
       - name: Console
         run: |
-          docker image ls
+          docker image ls | grep ${{ env.APP_NAME }}

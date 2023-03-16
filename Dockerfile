@@ -17,5 +17,7 @@ RUN dotnet publish -c Release -o /app -r linux-x64 --self-contained true --no-re
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 COPY --from=build /app ./
+# COPY static files
+COPY --from=build /source/aspnetapp/www/ ./www/
 # set ASPNETCORE_URLS
 ENTRYPOINT ["dotnet", "aspnetapp.dll"]
