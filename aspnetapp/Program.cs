@@ -19,6 +19,12 @@ builder.Services.AddCors(options =>
   });
 });
 string providerSerializerName = "mymsgpack";
+// builder.Services.AddSingleton<ILog, MyLogger>();
+builder.Services.AddMyLogger(options => {
+  options.UseInfoLogger(config => {
+    config.ForegroundColor = ConsoleColor.Green;
+  }, "customLogger");
+});
 builder.Services.AddEasyCaching(options =>
 {
   options.UseRedis(config =>
@@ -76,7 +82,11 @@ app.UseStaticFiles(new StaticFileOptions
 });
 int count = 0;
 
-app.MapGet("/", () => "Hello World");
+app.MapGet("/", (ILog log) =>
+{
+  log.info($"injection log access /");
+  return "Hello World";
+});
 app.MapHealthChecks("/healthz");
 app.MapGet("/next", async (context) =>
 {
